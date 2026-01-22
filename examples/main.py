@@ -239,7 +239,7 @@ if __name__ == "__main__":
     obj_path = pathlib.Path(__file__).parent.parent / "models"
     obj_file = obj_path / "pylone.obj"
     pylone_pose = pin.XYZQUATToSE3([0.45, -0.116, 0.739, 0.0, 0.0, 0.0, 1.0])
-    target = pin.SE3(np.eye(3), np.array([0.5, 0.4, 0.5]))
+    target = pin.SE3(np.eye(3), np.array([0.35, -0.1, 0.7]))
 
     rmodel, cmodel, vmodel = load_reduced_panda()
     rdata = rmodel.createData()
