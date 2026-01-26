@@ -118,7 +118,7 @@ if __name__ == "__main__":
             resampled_traj = resample_trajectory(traj.position.cpu().numpy(), T=50)
             xs = [resampled_traj[t] for t in range(resampled_traj.shape[0])]
 
-            result = store_results(xs, target.translation, rmodel)
+            result = store_results(xs, pin.SE3ToXYZQUAT(target), rmodel)
             results.append(result)
             # for x in xs:
             #     q = x[: rmodel.nq]
