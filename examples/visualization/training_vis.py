@@ -2,11 +2,11 @@ import numpy as np
 import pinocchio as pin
 import matplotlib.pyplot as plt
 
-from deburring_diffusion.traj_gen_utils import (
+from deburring_diffusion.robot.traj_gen_utils import (
     from_trajectory_to_ee_poses,
     load_results
 )
-from deburring_diffusion.panda_env_loader import load_reduced_panda
+from deburring_diffusion.robot.panda_env_loader import load_reduced_panda
 
 
 if __name__ == "__main__":
@@ -57,4 +57,5 @@ if __name__ == "__main__":
     ax.legend()
     ax.set_box_aspect([1, 1, 1])
 
-    plt.show()
+    plt.savefig(pathlib.Path(__file__).parent.parent.parent / "results" / "traj_generator" / 'trajectory_output.png')
+    print("Plot saved as trajectory_output.png")

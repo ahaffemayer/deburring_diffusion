@@ -58,6 +58,17 @@ if __name__ == "__main__":
     # Problem settings
     pylone_pose = pin.XYZQUATToSE3([0.45, -0.116, 0.739, 0.0, 0.0, 0.0, 1.0])
     target = pin.SE3(np.eye(3), np.array([0.35, 0.4, 0.7]))
+    q_start = np.array(
+        [
+            0.0,
+            -0.4,
+            0.0,
+            -0.2,
+            0.0,
+            1.57,
+            0.79,
+        ]
+    )
 
     n_trajectories = 100
 
@@ -94,17 +105,6 @@ if __name__ == "__main__":
 
     motion_gen = create_motion_gen_curobo(pylone_pose=pylone_pose, obj_file=obj_file)
     plan_cfg = create_motion_gen_plan_config()
-    q_start = np.array(
-        [
-            0.0,
-            -0.4,
-            0.0,
-            -0.2,
-            0.0,
-            1.57,
-            0.79,
-        ]
-    )
 
     robot[:] = q_start
 

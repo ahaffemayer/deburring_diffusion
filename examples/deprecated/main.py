@@ -9,15 +9,15 @@ import pinocchio as pin
 import hppfcl
 from robomeshcat import Scene, Object, Robot
 
-from deburring_diffusion.visualizer import (
+from deburring_diffusion.robot.visualizer import (
     create_viewer,
     add_sphere_to_viewer,
 )
-from deburring_diffusion.panda_env_loader import (
+from deburring_diffusion.robot.panda_env_loader import (
     load_reduced_panda,
     robot_links,
 )
-from deburring_diffusion.curobo_utils import get_device_args
+from deburring_diffusion.robot.curobo_utils import get_device_args
 
 from curobo.geom.sdf.world import CollisionCheckerType
 from curobo.geom.types import WorldConfig, Cuboid
