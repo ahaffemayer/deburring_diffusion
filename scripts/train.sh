@@ -1,0 +1,1 @@
+python ../src/deburring_diffusion/diffusion/train.py fit --config config/diffusion_config.yml

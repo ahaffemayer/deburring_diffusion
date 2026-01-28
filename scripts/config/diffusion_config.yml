@@ -1,0 +1,5 @@
+data:
+  data_file: /workspaces/deburring_diffusion/results/traj_generator/single_configuration_single_single_pose.json
+trainer:
+  max_epochs: 100
+  default_root_dir: /workspaces/deburring_diffusion/results/diffusion
