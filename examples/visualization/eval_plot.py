@@ -24,8 +24,9 @@ from deburring_diffusion.robot.visualization_utils import (
 
 # Configuration constants
 CHECKPOINT_PATH = (
-    "/workspaces/deburring_diffusion/results/diffusion/"
-    "lightning_logs/version_0/checkpoints/epoch=99-step=700.ckpt"
+    # "/workspaces/deburring_diffusion/results/diffusion/"
+    # "lightning_logs/version_0/checkpoints/epoch=99-step=700.ckpt"
+    "/workspaces/deburring_diffusion/results/diffusion/lightning_logs/version_1/checkpoints/epoch=499-step=19000.ckpt"
 )
 N_SAMPLES = 10
 SEQ_LENGTH = 50

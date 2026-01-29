@@ -24,9 +24,12 @@ from deburring_diffusion.robot.visualization_utils import (
 
 # Configuration
 CHECKPOINT_PATH = (
-    "/workspaces/deburring_diffusion/results/diffusion/"
-    "lightning_logs/version_0/checkpoints/epoch=99-step=700.ckpt"
+    # "/workspaces/deburring_diffusion/results/diffusion/"
+    # # "lightning_logs/version_0/checkpoints/epoch=99-step=700.ckpt" This is for single goal single conf
+    "/workspaces/deburring_diffusion/results/diffusion/lightning_logs/version_1/checkpoints/epoch=499-step=19000.ckpt"
 )
+
+
 MODEL_PATH = pathlib.Path("/workspaces/deburring_diffusion/models")
 OBJ_FILE = MODEL_PATH / "pylone.obj"
 
@@ -52,6 +55,8 @@ def main() -> None:
     print("[2/6] Preparing target and conditioning...")
     target_se3 = pin.SE3(np.eye(3), TARGET_POSITION)
     target_xyzquat = pin.SE3ToXYZQUAT(target_se3)
+
+    Q_START = pin.randomConfiguration(rmodel)
 
     cond_dict = prepare_conditioning(
         q_start=Q_START,
@@ -83,6 +88,7 @@ def main() -> None:
         target_se3=target_se3,
         pylone_pose=PYLONE_POSE,
     )
+    robot[:] = Q_START
 
     print(f"\n{'=' * 70}")
     print("MeshCat visualization ready!")
