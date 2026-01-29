@@ -31,6 +31,9 @@ RUN pip install --pre torch torchvision --index-url https://download.pytorch.org
 # Install common Python packages
 RUN pip install ipykernel matplotlib pandas numpy scikit-learn tensorboard
 
+# Install Ruff for linting and formatting
+RUN pip install --no-cache-dir ruff
+
 # 3. Clone and install cuRobo
 # The --no-cache-dir ensures we don't use old, incorrectly compiled wheels
 WORKDIR /workspace
