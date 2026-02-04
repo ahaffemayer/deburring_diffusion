@@ -132,9 +132,6 @@ The container is optimized for RTX 5080 (Compute Capability 12.0):
 - **cuRobo Examples**: `/workspace/curobo/examples/`
 - **PyTorch Nightly**: https://pytorch.org/get-started/locally/
 
-## License
-
-
 ## Citation
 
 If you use this work in your research, please cite:
