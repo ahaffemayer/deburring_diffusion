@@ -11,9 +11,6 @@
   "containerEnv": {
     "GIT_EDITOR": "code --wait"
   },
-
-  "postCreateCommand": "python -m pip install -U pip && python -m pip install -e /workspaces/deburring_diffusion",
-
   "customizations": {
     "vscode": {
       "extensions": [
