@@ -108,7 +108,7 @@ def create_motion_gen_curobo(
             "base_box": {"dims": [0.5, 0.6, 0.435], "pose": base_box_pose_list},
             "table": {
                 "dims": [2.0, 2.0, 0.2],
-                "pose": [0.0, 0.0, -0.2, 1.0, 0.0, 0.0, 0.0],
+                "pose": [0.0, 0.0, -0.15, 1.0, 0.0, 0.0, 0.0],
             },
         },
     }

@@ -151,7 +151,9 @@ def plot_trajectories(
         traj_np = sampled_trajs[i].cpu().numpy()
         xs = [traj_np[t] for t in range(traj_np.shape[0])]
 
-        ee_poses = from_trajectory_to_ee_poses(rmodel, xs, "fer_ati_mini45_with_compact_camera_tool")
+        ee_poses = from_trajectory_to_ee_poses(
+            rmodel, xs, "fer_ati_mini45_with_compact_camera_tool"
+        )
         ee_xyz = np.array([pose.translation for pose in ee_poses])
 
         ax.plot(
@@ -232,6 +234,24 @@ def setup_scene(
     )
     scene.add_object(pylone)
     pylone.pose = pylone_pose.homogeneous
+
+    # Add environment primitives
+    pylone_to_box = pin.SE3(np.eye(3), np.array([0.01, 0.015, -0.50]))
+    base_box = Object.create_cuboid(
+        lengths=[0.5, 0.6, 0.435],
+        name="robot/base_box",
+        color=[0.0, 0.5, 0.5],
+    )
+    scene.add_object(base_box)
+    base_box.pose = (pylone_pose * pylone_to_box).homogeneous
+
+    table = Object.create_cuboid(
+        lengths=[2.0, 2.0, 0.2],
+        name="robot/table",
+        color=[0.5, 0.5, 0.0],
+    )
+    scene.add_object(table)
+    table.pose[2, 3] = -0.15
 
     # Add goal sphere
     goal = Object.create_sphere(
