@@ -26,7 +26,7 @@ if __name__ == "__main__":
     for traj_id, result in enumerate(results):
         trajectory = [np.array(q) for q in result["trajectory"]]
 
-        ee_poses = from_trajectory_to_ee_poses(rmodel, trajectory)
+        ee_poses = from_trajectory_to_ee_poses(rmodel, trajectory, "fer_ati_mini45_with_compact_camera_tool")
         ee_xyz = np.array([pose.translation for pose in ee_poses])
 
         ax.plot(

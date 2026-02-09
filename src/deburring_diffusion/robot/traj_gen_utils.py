@@ -22,21 +22,23 @@ def load_results(file_path: str) -> dict:
     return data
 
 
-def q_to_se3(rmodel: pin.Model, q: np.ndarray) -> pin.SE3:
+def q_to_se3(
+    rmodel: pin.Model, q: np.ndarray, ee_frame: str = "fer_hand_tcp"
+) -> pin.SE3:
     """Converts a configuration vector to an SE3 pose of the end-effector."""
     rdata = rmodel.createData()
     pin.framesForwardKinematics(rmodel, rdata, q)
-    ee_frame_id = rmodel.getFrameId("fer_hand_tcp")
+    ee_frame_id = rmodel.getFrameId(ee_frame)
     ee_pose = rdata.oMf[ee_frame_id]
     return ee_pose
 
 
 def from_trajectory_to_ee_poses(
-    rmodel: pin.Model, trajectory: List[np.ndarray]
+    rmodel: pin.Model, trajectory: List[np.ndarray], ee_frame: str = "fer_hand_tcp"
 ) -> List[pin.SE3]:
     """Extracts end-effector poses from a list of configuration vectors."""
     ee_poses = []
     for q in trajectory:
-        ee_pose = q_to_se3(rmodel, q)
+        ee_pose = q_to_se3(rmodel, q, ee_frame)
         ee_poses.append(ee_pose)
     return ee_poses

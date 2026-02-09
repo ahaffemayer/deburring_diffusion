@@ -151,7 +151,7 @@ def plot_trajectories(
         traj_np = sampled_trajs[i].cpu().numpy()
         xs = [traj_np[t] for t in range(traj_np.shape[0])]
 
-        ee_poses = from_trajectory_to_ee_poses(rmodel, xs)
+        ee_poses = from_trajectory_to_ee_poses(rmodel, xs, "fer_ati_mini45_with_compact_camera_tool")
         ee_xyz = np.array([pose.translation for pose in ee_poses])
 
         ax.plot(
