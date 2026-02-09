@@ -1,5 +1,6 @@
 import json
 import pathlib
+import time
 
 import numpy as np
 import pinocchio as pin
@@ -61,19 +62,26 @@ z_lim = np.array([-0.3, 1.3])
 
 
 def generate_reachable_target(
-    x_lim: np.ndarray, y_lim: np.ndarray, z_lim: np.ndarray
+    x_lim: np.ndarray,
+    y_lim: np.ndarray,
+    z_lim: np.ndarray,
+    normal_sampling: bool = False,
 ) -> pin.SE3:
     """
     x_lim, y_lim, z_lim: arrays like [min, max]
     """
-
-    t = np.array(
-        [
-            np.random.uniform(x_lim[0], x_lim[1]),
-            np.random.uniform(y_lim[0], y_lim[1]),
-            np.random.uniform(z_lim[0], z_lim[1]),
-        ]
-    )
+    if normal_sampling:
+        lim_loc = np.sum(np.vstack([x_lim, y_lim, z_lim]), axis=1) * 0.5
+        lim_size = np.diff(np.vstack([x_lim, y_lim, z_lim]), axis=1)
+        t = np.random.normal(loc=lim_loc, scale=lim_size, size=None).diagonal()
+    else:
+        t = np.array(
+            [
+                np.random.uniform(x_lim[0], x_lim[1]),
+                np.random.uniform(y_lim[0], y_lim[1]),
+                np.random.uniform(z_lim[0], z_lim[1]),
+            ]
+        )
 
     R = pin.exp3(np.random.randn(3))
 
@@ -122,7 +130,6 @@ if __name__ == "__main__":
 
             consecutive_failures = 0
             success_count = 0
-            visualized = False
 
             for i in range(N_TRAJECTORIES_PER_TARGET):
                 try:
@@ -136,11 +143,10 @@ if __name__ == "__main__":
                     result = store_results(xs, pin.SE3ToXYZQUAT(TARGET_SE3), rmodel)
                     results.append(result)
 
-                    if VISUALIZE_TRAJECTORIES and not visualized:
-                        visualized = True
+                    if VISUALIZE_TRAJECTORIES:
                         for x in xs:
                             robot[:] = x[: rmodel.nq]
-                            input()
+                            time.sleep(0.001)
 
                     success_count += 1
                     consecutive_failures = 0

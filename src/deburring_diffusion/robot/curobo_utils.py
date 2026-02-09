@@ -84,17 +84,14 @@ def create_motion_gen_curobo(
 ) -> MotionGen:
     """Create and return a curobo MotionGen instance for the Franka robot."""
     if isinstance(pylone_pose, pin.SE3):
-        pylone_pose_quat = pin.SE3ToXYZQUAT(pylone_pose)  # (x, y, z, qx, qy, qz, qw)
+        pylone_to_box = pin.SE3(np.eye(3), np.array([0.01, 0.015, -0.50]))
+        base_box_pose = pin.SE3ToXYZQUAT(pylone_pose * pylone_to_box)
+        pylone_pose = pin.SE3ToXYZQUAT(pylone_pose)  # (x, y, z, qx, qy, qz, qw)
         # Convert to (x, y, z, qw, qx, qy, qz)
-        pylone_pose_list = [
-            float(pylone_pose_quat[0]),
-            float(pylone_pose_quat[1]),
-            float(pylone_pose_quat[2]),
-            float(pylone_pose_quat[6]),
-            float(pylone_pose_quat[3]),
-            float(pylone_pose_quat[4]),
-            float(pylone_pose_quat[5]),
-        ]
+        out_indicies = [0, 1, 2, 6, 3, 4, 5]
+        pylone_pose_list = [float(pylone_pose[i]) for i in out_indicies]
+        base_box_pose_list = [float(base_box_pose[i]) for i in out_indicies]
+
     else:
         raise ValueError("pylone_pose must be a pin.SE3 instance.")
 
@@ -106,6 +103,13 @@ def create_motion_gen_curobo(
                 "pose": pylone_pose_list,
                 "file_path": obj_file.as_posix(),
             }
+        },
+        "cuboid": {
+            "base_box": {"dims": [0.5, 0.6, 0.435], "pose": base_box_pose_list},
+            "table": {
+                "dims": [2.0, 2.0, 0.2],
+                "pose": [0.0, 0.0, -0.2, 1.0, 0.0, 0.0, 0.0],
+            },
         },
     }
     print("World config for Curobo MotionGen:", world_config)
