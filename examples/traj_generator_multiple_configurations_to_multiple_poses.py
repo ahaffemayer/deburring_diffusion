@@ -57,7 +57,7 @@ VISUALIZE_TRAJECTORIES = False  # Set to True for interactive visualization
 MAX_TRIES = 15
 x_lim = np.array([-0.7, 0.7])
 y_lim = np.array([-0.7, 0.7])
-z_lim = np.array([-0.3, 1])
+z_lim = np.array([-0.3, 1.3])
 
 
 def generate_reachable_target(
@@ -93,6 +93,17 @@ if __name__ == "__main__":
     )
     plan_cfg = create_motion_gen_plan_config()
 
+    if VISUALIZE_TRAJECTORIES:
+        scene, robot = setup_scene(
+            rmodel=rmodel,
+            rdata=rdata,
+            vmodel=vmodel,
+            vdata=vdata,
+            obj_file=OBJ_FILE,
+            target_se3=TARGET_SE3,
+            pylone_pose=PYLONE_POSE,
+        )
+
     results = []
     with progress:
         target_task = progress.add_task("  • Targets processed", total=N_TARGET)
@@ -111,6 +122,7 @@ if __name__ == "__main__":
 
             consecutive_failures = 0
             success_count = 0
+            visualized = False
 
             for i in range(N_TRAJECTORIES_PER_TARGET):
                 try:
@@ -124,16 +136,8 @@ if __name__ == "__main__":
                     result = store_results(xs, pin.SE3ToXYZQUAT(TARGET_SE3), rmodel)
                     results.append(result)
 
-                    if VISUALIZE_TRAJECTORIES:
-                        scene, robot = setup_scene(
-                            rmodel=rmodel,
-                            rdata=rdata,
-                            vmodel=vmodel,
-                            vdata=vdata,
-                            obj_file=OBJ_FILE,
-                            target_se3=TARGET_SE3,
-                            pylone_pose=PYLONE_POSE,
-                        )
+                    if VISUALIZE_TRAJECTORIES and not visualized:
+                        visualized = True
                         for x in xs:
                             robot[:] = x[: rmodel.nq]
                             input()
