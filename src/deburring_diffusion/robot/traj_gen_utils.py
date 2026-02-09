@@ -26,7 +26,7 @@ def q_to_se3(rmodel: pin.Model, q: np.ndarray) -> pin.SE3:
     """Converts a configuration vector to an SE3 pose of the end-effector."""
     rdata = rmodel.createData()
     pin.framesForwardKinematics(rmodel, rdata, q)
-    ee_frame_id = rmodel.getFrameId("panda_hand_tcp")
+    ee_frame_id = rmodel.getFrameId("fer_hand_tcp")
     ee_pose = rdata.oMf[ee_frame_id]
     return ee_pose
 

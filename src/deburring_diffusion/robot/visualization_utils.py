@@ -8,7 +8,7 @@ import torch
 from robomeshcat import Object, Robot, Scene
 
 from deburring_diffusion.diffusion.model import Model
-from deburring_diffusion.robot.panda_env_loader import load_reduced_panda
+from deburring_diffusion.robot.panda_env_loader import load_fer
 from deburring_diffusion.robot.traj_gen_utils import (
     from_trajectory_to_ee_poses,
     store_results,
@@ -21,7 +21,7 @@ def setup_environment() -> tuple:
     Returns:
         tuple: (rmodel, rdata) - robot model and robot data
     """
-    rmodel, cmodel, vmodel = load_reduced_panda()
+    rmodel, cmodel, vmodel = load_fer()
     rdata = rmodel.createData()
     vdata = vmodel.createData()
     cdata = cmodel.createData()

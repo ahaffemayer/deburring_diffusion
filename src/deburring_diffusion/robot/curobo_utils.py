@@ -80,6 +80,7 @@ def parser_collision_model(collision_model) -> dict:
 def create_motion_gen_curobo(
     pylone_pose: pin.SE3 = pin.SE3.Identity(),
     obj_file: pathlib.Path = pathlib.Path(""),
+    use_custom_panda: bool = False,
 ) -> MotionGen:
     """Create and return a curobo MotionGen instance for the Franka robot."""
     if isinstance(pylone_pose, pin.SE3):
@@ -108,7 +109,11 @@ def create_motion_gen_curobo(
         },
     }
     print("World config for Curobo MotionGen:", world_config)
-    robot_file = "franka.yml"  # assumes this file is in your curobo robot configs
+    if not use_custom_panda:
+        robot_file = "franka.yml"  # assumes this file is in your curobo robot configs
+    else:
+        package_dir = pathlib.Path(__file__).parent.parent.parent.parent
+        robot_file = (package_dir / "models" / "fer" / "fer.yaml").as_posix()
     motion_gen_cfg = MotionGenConfig.load_from_robot_config(
         robot_file,
         world_config,
