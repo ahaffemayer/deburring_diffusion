@@ -6,7 +6,7 @@ from deburring_diffusion.robot.traj_gen_utils import (
     from_trajectory_to_ee_poses,
     load_results
 )
-from deburring_diffusion.robot.panda_env_loader import load_reduced_panda
+from deburring_diffusion.robot.panda_env_loader import load_fer
 
 
 if __name__ == "__main__":
@@ -14,9 +14,9 @@ if __name__ == "__main__":
     results_path = pathlib.Path(__file__).parent.parent.parent / "results" / "traj_generator" / "single_configuration_single_single_pose.json"
     results = load_results(results_path)
 
-    rmodel, _, _ = load_reduced_panda()
+    rmodel, _, _ = load_fer()
+
     
-        
     # ---------------------------
     # Plot EE translations
     # ---------------------------

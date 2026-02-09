@@ -1,3 +1,5 @@
+import pathlib
+
 import example_robot_data as robex
 import numpy as np
 import pinocchio as pin
@@ -23,6 +25,15 @@ self_collision_pairs = [
     ("panda_link6_capsule_0", "panda_link7_capsule_0"),
     ("panda_link0_capsule_0", "panda_link7_capsule_0"),
 ]
+
+
+def load_fer():
+    package_dir = pathlib.Path(__file__).parent.parent.parent.parent
+    urdf_file = package_dir / "models" / "fer" / "fer.urdf"
+    rmodel, cmodel, vmodel = pin.buildModelsFromUrdf(
+        urdf_file, package_dirs=[package_dir]
+    )
+    return rmodel, cmodel, vmodel
 
 
 def load_panda():

@@ -1,0 +1,104 @@
+robot_cfg:
+  kinematics:
+    use_usd_kinematics: False
+    isaac_usd_path: ""
+    usd_path: "/workspaces/deburring_diffusion/models/fer/fer.usda"
+    usd_robot_root: "/fer"
+    usd_flip_joints:
+      {
+        "fer_joint1": "Z",
+        "fer_joint2": "Z",
+        "fer_joint3": "Z",
+        "fer_joint4": "Z",
+        "fer_joint5": "Z",
+        "fer_joint6": "Z",
+        "fer_joint7": "Z",
+      }
+
+    usd_flip_joint_limits: []
+    urdf_path: "/workspaces/deburring_diffusion/models/fer/fer.urdf"
+    asset_root_path: "/workspaces/deburring_diffusion/models/fer"
+    base_link: "fer_link0"
+    ee_link: "fer_ati_mini45_with_compact_camera_tool"
+    collision_link_names:
+      [
+        "fer_link0",
+        "fer_link1",
+        "fer_link2",
+        "fer_link3",
+        "fer_link4",
+        "fer_link5",
+        "fer_link6",
+        "fer_link7",
+      ]
+    collision_spheres: "/workspaces/deburring_diffusion/models/fer/fer_mesh.yaml"
+    collision_sphere_buffer: 0.001
+    use_global_cumul: True
+    self_collision_ignore:
+      {
+        "fer_link0": ["fer_link1", "fer_link2"],
+        "fer_link1": ["fer_link2", "fer_link3", "fer_link4"],
+        "fer_link2": ["fer_link3", "fer_link4"],
+        "fer_link3": ["fer_link4", "fer_link6"],
+        "fer_link4":
+          [
+            "fer_link5",
+            "fer_link6",
+            "fer_link7",
+            "camera_link",
+            "fer_ati_mini45_with_compact_camera_tool",
+          ],
+        "fer_link5": ["fer_link6", "fer_link7", "camera_link"],
+        "fer_link6":
+          [
+            "fer_link7",
+            "camera_link",
+            "fer_ati_mini45_with_compact_camera_tool",
+          ],
+      }
+
+    self_collision_buffer:
+      {
+        "fer_link0": 0.1,
+        "fer_link1": 0.05,
+        "fer_link2": 0.0,
+        "fer_link3": 0.0,
+        "fer_link4": 0.0,
+        "fer_link5": 0.0,
+        "fer_link6": 0.0,
+        "fer_link7": 0.0,
+        "camera_link": 0.0,
+        "fer_ati_mini45_with_compact_camera_tool": 0.0,
+      }
+    link_names: null
+    mesh_link_names:
+      [
+        "fer_link0",
+        "fer_link1",
+        "fer_link2",
+        "fer_link3",
+        "fer_link4",
+        "fer_link5",
+        "fer_link6",
+        "fer_link7",
+        "camera_link",
+        "fer_ati_mini45_with_compact_camera_tool",
+      ]
+    cspace:
+      joint_names:
+        [
+          "fer_joint1",
+          "fer_joint2",
+          "fer_joint3",
+          "fer_joint4",
+          "fer_joint5",
+          "fer_joint6",
+          "fer_joint7",
+          "camera_link",
+          "fer_ati_mini45_with_compact_camera_tool",
+        ]
+      retract_config: [0.0, -1.3, 0.0, -2.5, 0.0, 1.0, 0., 0.04, 0.04]
+      null_space_weight: [1, 1, 1, 1, 1, 1, 1, 1, 1]
+      cspace_distance_weight: [1, 1, 1, 1, 1, 1, 1, 1, 1]
+      max_acceleration: 15.0
+      max_jerk: 500.0
