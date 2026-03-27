@@ -20,7 +20,7 @@ from deburring_diffusion.robot.curobo_utils import (
     resample_trajectory,
 )
 from deburring_diffusion.robot.panda_env_loader import (
-    load_reduced_panda,
+    load_fer,
 )
 from deburring_diffusion.robot.traj_gen_utils import store_results
 
@@ -66,7 +66,7 @@ if __name__ == "__main__":
     obj_path = pathlib.Path(__file__).parent.parent / "models"
     obj_file = obj_path / "pylone.obj"
 
-    rmodel, cmodel, vmodel = load_reduced_panda()
+    rmodel, cmodel, vmodel = load_fer()
     rdata = rmodel.createData()
     vdata = vmodel.createData()
 
@@ -90,7 +90,9 @@ if __name__ == "__main__":
     scene.add_object(goal)
     goal.pose = target.homogeneous
 
-    motion_gen = create_motion_gen_curobo(pylone_pose=pylone_pose, obj_file=obj_file)
+    motion_gen = create_motion_gen_curobo(
+        pylone_pose=pylone_pose, obj_file=obj_file, use_custom_panda=True
+    )
     plan_cfg = create_motion_gen_plan_config()
 
     robot[:] = q_start

@@ -1,5 +1,6 @@
 import json
 import pathlib
+import time
 
 import numpy as np
 import pinocchio as pin
@@ -20,7 +21,7 @@ from deburring_diffusion.robot.curobo_utils import (
     resample_trajectory,
 )
 from deburring_diffusion.robot.panda_env_loader import (
-    load_reduced_panda,
+    load_fer,
 )
 from deburring_diffusion.robot.traj_gen_utils import store_results
 from deburring_diffusion.robot.visualization_utils import setup_scene
@@ -57,23 +58,30 @@ VISUALIZE_TRAJECTORIES = False  # Set to True for interactive visualization
 MAX_TRIES = 15
 x_lim = np.array([-0.7, 0.7])
 y_lim = np.array([-0.7, 0.7])
-z_lim = np.array([-0.3, 1])
+z_lim = np.array([-0.3, 1.3])
 
 
 def generate_reachable_target(
-    x_lim: np.ndarray, y_lim: np.ndarray, z_lim: np.ndarray
+    x_lim: np.ndarray,
+    y_lim: np.ndarray,
+    z_lim: np.ndarray,
+    normal_sampling: bool = False,
 ) -> pin.SE3:
     """
     x_lim, y_lim, z_lim: arrays like [min, max]
     """
-
-    t = np.array(
-        [
-            np.random.uniform(x_lim[0], x_lim[1]),
-            np.random.uniform(y_lim[0], y_lim[1]),
-            np.random.uniform(z_lim[0], z_lim[1]),
-        ]
-    )
+    if normal_sampling:
+        lim_loc = np.sum(np.vstack([x_lim, y_lim, z_lim]), axis=1) * 0.5
+        lim_size = np.diff(np.vstack([x_lim, y_lim, z_lim]), axis=1)
+        t = np.random.normal(loc=lim_loc, scale=lim_size, size=None).diagonal()
+    else:
+        t = np.array(
+            [
+                np.random.uniform(x_lim[0], x_lim[1]),
+                np.random.uniform(y_lim[0], y_lim[1]),
+                np.random.uniform(z_lim[0], z_lim[1]),
+            ]
+        )
 
     R = pin.exp3(np.random.randn(3))
 
@@ -84,12 +92,25 @@ if __name__ == "__main__":
     tensor_args = get_device_args()
     print("Using device:", tensor_args.device)
 
-    rmodel, cmodel, vmodel = load_reduced_panda()
+    rmodel, cmodel, vmodel = load_fer()
     rdata = rmodel.createData()
     vdata = vmodel.createData()
 
-    motion_gen = create_motion_gen_curobo(pylone_pose=PYLONE_POSE, obj_file=OBJ_FILE)
+    motion_gen = create_motion_gen_curobo(
+        pylone_pose=PYLONE_POSE, obj_file=OBJ_FILE, use_custom_panda=True
+    )
     plan_cfg = create_motion_gen_plan_config()
+
+    if VISUALIZE_TRAJECTORIES:
+        scene, robot = setup_scene(
+            rmodel=rmodel,
+            rdata=rdata,
+            vmodel=vmodel,
+            vdata=vdata,
+            obj_file=OBJ_FILE,
+            target_se3=TARGET_SE3,
+            pylone_pose=PYLONE_POSE,
+        )
 
     results = []
     with progress:
@@ -123,18 +144,9 @@ if __name__ == "__main__":
                     results.append(result)
 
                     if VISUALIZE_TRAJECTORIES:
-                        scene, robot = setup_scene(
-                            rmodel=rmodel,
-                            rdata=rdata,
-                            vmodel=vmodel,
-                            vdata=vdata,
-                            obj_file=OBJ_FILE,
-                            target_se3=TARGET_SE3,
-                            pylone_pose=PYLONE_POSE,
-                        )
                         for x in xs:
                             robot[:] = x[: rmodel.nq]
-                            input()
+                            time.sleep(0.001)
 
                     success_count += 1
                     consecutive_failures = 0

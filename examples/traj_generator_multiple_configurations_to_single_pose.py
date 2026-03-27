@@ -20,7 +20,7 @@ from deburring_diffusion.robot.curobo_utils import (
     resample_trajectory,
 )
 from deburring_diffusion.robot.panda_env_loader import (
-    load_reduced_panda,
+    load_fer,
 )
 from deburring_diffusion.robot.traj_gen_utils import store_results
 from deburring_diffusion.robot.visualization_utils import setup_scene
@@ -58,7 +58,7 @@ if __name__ == "__main__":
     tensor_args = get_device_args()
     print("Using device:", tensor_args.device)
 
-    rmodel, cmodel, vmodel = load_reduced_panda()
+    rmodel, cmodel, vmodel = load_fer()
     rdata = rmodel.createData()
     vdata = vmodel.createData()
 
@@ -74,7 +74,9 @@ if __name__ == "__main__":
         )
         robot[:] = pin.neutral(rmodel)
 
-    motion_gen = create_motion_gen_curobo(pylone_pose=PYLONE_POSE, obj_file=OBJ_FILE)
+    motion_gen = create_motion_gen_curobo(
+        pylone_pose=PYLONE_POSE, obj_file=OBJ_FILE, use_custom_panda=True
+    )
     plan_cfg = create_motion_gen_plan_config()
 
     results = []
