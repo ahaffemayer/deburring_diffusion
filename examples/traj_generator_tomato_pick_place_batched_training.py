@@ -23,7 +23,7 @@ import pinocchio as pin
 import torch
 import yaml
 from curobo.geom.sdf.world import CollisionCheckerType
-from curobo.geom.types import Cylinder
+from curobo.geom.types import Cylinder, WorldConfig
 from curobo.rollout.cost.pose_cost import PoseCostMetric
 from curobo.types.math import Pose
 from curobo.types.robot import JointState
@@ -39,7 +39,6 @@ from rich.progress import (
 
 from deburring_diffusion.robot.curobo_utils import get_device_args, resample_trajectory
 
-
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[1]
 TOMATO_SCENE_ROOT = REPO_ROOT / "tomato_reach_scene"
 TOMATO_SCENE_SRC = TOMATO_SCENE_ROOT / "src"
@@ -48,7 +47,6 @@ if TOMATO_SCENE_SRC.exists():
 
 from tomato_reach_scene import Scene, SceneConfig, SceneSampler  # noqa: E402
 from tomato_reach_scene import constants as tomato_constants  # noqa: E402
-
 
 OUTPUT_DIR = REPO_ROOT / "results" / "traj_generator"
 DEFAULT_OUTPUT = OUTPUT_DIR / "tomato_pick_place_batched_training.json"
@@ -188,6 +186,8 @@ def scene_to_world(scene: Scene, *, include_tomato: bool) -> dict[str, dict[str,
 
 def create_motion_gen(world: dict[str, dict[str, Any]], args: argparse.Namespace) -> MotionGen:
     tensor_args = get_device_args()
+    # cuRobo's PRIMITIVE checker loads cuboids/OBBs, not raw cylinders.
+    world = WorldConfig.from_dict(world).get_obb_world()
     cfg = MotionGenConfig.load_from_robot_config(
         "franka.yml",
         world,
