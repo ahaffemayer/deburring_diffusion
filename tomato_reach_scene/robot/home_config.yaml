@@ -1,0 +1,41 @@
+# Home / start joint configuration for the Franka Panda used in this rig.
+#
+# This is the Franka standard "ready" pose — elbow up, wrist neutral.
+# Mirrors scripts/go_home.py in the source repo (the canonical "go home"
+# routine on the real robot).
+#
+# Joint order matches the URDF: panda_joint1 … panda_joint7.
+
+joint_names:
+  - panda_joint1
+  - panda_joint2
+  - panda_joint3
+  - panda_joint4
+  - panda_joint5
+  - panda_joint6
+  - panda_joint7
+
+# Radians (preferred for direct use with most planners).
+q_home_rad:
+  - 0.0
+  - -0.7853981633974483    # -pi/4
+  - 0.0
+  - -2.356194490192345     # -3*pi/4
+  - 0.0
+  - 1.5707963267948966     # pi/2
+  - 0.7853981633974483     # pi/4
+
+# Same values in degrees, for convenience / cross-checks.
+q_home_deg:
+  - 0.0
+  - -45.0
+  - 0.0
+  - -135.0
+  - 0.0
+  - 90.0
+  - 45.0
+
+# Gripper rest state. The Franka Hand is reset to fully open at home.
+gripper:
+  width_m: 0.08          # fully open
+  speed_m_per_s: 0.1     # slow, safe

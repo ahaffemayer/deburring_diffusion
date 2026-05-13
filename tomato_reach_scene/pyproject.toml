@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tomato-reach-scene"
+version = "0.1.1"
+description = "Procedural scene generator for the tomato-reach experiment. Produces STORM/cuRobo-compatible world yamls + grasp poses for a Franka Panda + EKENABBEN shelf rig."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Cyfine" }]
+
+dependencies = [
+    "numpy>=1.24",
+    "pyyaml>=6",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"tomato_reach_scene" = ["py.typed"]
