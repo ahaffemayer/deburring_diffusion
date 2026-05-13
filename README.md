@@ -41,7 +41,15 @@ This project uses diffusion models to generate robot trajectories for deburring 
    - **First build takes ~30-40 minutes** (building PyTorch for SM 12.0 + cuRobo)
    - Subsequent starts are much faster (~10-15 seconds)
 
-4. **Verify installation**:
+4. **Install this package in editable mode**:
+   ```bash
+   pip install -e .
+   ```
+
+   This makes local imports such as `deburring_diffusion.robot.curobo_utils` work from
+   the example scripts.
+
+5. **Verify installation**:
    ```python
    import torch
    print(f"PyTorch version: {torch.__version__}")
@@ -53,89 +61,63 @@ This project uses diffusion models to generate robot trajectories for deburring 
    print("cuRobo loaded successfully!")
    ```
 
-## Project Structure
-
-```
-deburring_diffusion/
-├── .devcontainer/
-│   ├── devcontainer.json      # VS Code container configuration
-│   └── Dockerfile             # Container build instructions
-├── examples/
-│   └── traj_generator_multiple_configurations_to_multiple_poses.py
-│                              # Trajectory generation examples
-├── scripts/
-│   ├── train.sh               # Training launcher
-│   └── config/
-│       └── diffusion_config.yml  # Training configuration
-├── results/                   # Training outputs and checkpoints
-└── README.md
-```
-
 ## Usage
 
-### Generate Trajectories
+### Generate Tomato Pick-Place Training Data
 
-Run the trajectory generator to create motion plans:
+The tomato pick-place generator creates collision-aware trajectories for
+`tomato_reach_scene`, where the Franka picks `B_tomato` and places it on the
+upper shelf while avoiding the other objects and shelf.
+
+It supports:
+- multiple sampled scenes
+- random place poses on the upper shelf
+- random initial robot configurations
+- multiple joint-space modes for the same fixed scene/place target
+- cuRobo batched planning on the GPU
+
+Recommended training-size run:
 
 ```bash
-python examples/traj_generator_multiple_configurations_to_multiple_poses.py
+python examples/traj_generator_tomato_pick_place_batched_training.py \
+  --n-scenes 50 \
+  --places-per-scene 4 \
+  --modalities-per-place 4 \
+  --batch-size 32 \
+  --max-candidates-per-target 128 \
+  --min-mode-rms-rad 0.10 \
+  --start-noise-rad 0.35 \
+  --trajectory-length 100 \
+  --output results/traj_generator/tomato_pick_place_training.json
 ```
 
-This script demonstrates how to generate collision-free trajectories from multiple robot configurations to target poses using cuRobo.
+This targets up to:
 
-### Train the Diffusion Model
+```text
+50 scenes x 4 place poses x 4 modes = 800 trajectories
+```
 
-1. **Configure training** (optional):
-   Edit `scripts/config/diffusion_config.yml` to adjust:
-   - Dataset path
-   - Number of epochs
-
-2. **Launch training**:
-   ```bash
-   bash scripts/train.sh
-   ```
-
-3. **Monitor training**:
-   - TensorBoard: Open http://localhost:6006 in your browser
-   - Results are saved to `/results/`
+Notes:
+- `--min-mode-rms-rad` filters out near-duplicate joint-space solutions for the same scene/place target.
+- `Batch mode enable graph is only supported with num_graph_seeds==1` is a cuRobo warning. If trajectories are saved, it is safe to ignore.
 
 ### Visualization
 
-- **TensorBoard**: Automatically forwarded on port 6006
 - **Meshcat** (for 3D visualization): Available on port 7000
 
-## Configuration
+Visualize a generated tomato pick-place trajectory:
 
-### Training Configuration
-
-Edit `scripts/config/diffusion_config.yml`:
-
-```yaml
-# Example configuration
-data:
-  data_file: /workspaces/deburring_diffusion/results/traj_generator/multiple_configuration_multiple_poses.json
-trainer:
-  max_epochs: 1000
-  default_root_dir: /workspaces/deburring_diffusion/results/diffusion
+```bash
+python examples/visualization/visualize_tomato_pick_place_meshcat.py \
+  --dataset results/traj_generator/tomato_pick_place_training.json \
+  --index 0 \
+  --host 0.0.0.0 \
+  --web-port 7000 \
+  --loop
 ```
 
-### Hardware Configuration
+Open:
 
-The container is optimized for RTX 5080 (Compute Capability 12.0):
-- `TORCH_CUDA_ARCH_LIST="12.0+PTX"` for forward compatibility
-- PyTorch Nightly with CUDA 12.8 support
-- 8GB shared memory for efficient data loading
-
-## Resources
-
-- **cuRobo Documentation**: https://curobo.org/
-- **cuRobo Examples**: `/workspace/curobo/examples/`
-- **PyTorch Nightly**: https://pytorch.org/get-started/locally/
-
-## Citation
-
-If you use this work in your research, please cite:
-
-```bibtex
-[Add your citation here]
+```text
+http://localhost:7000/static/
 ```
